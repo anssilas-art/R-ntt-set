@@ -68,10 +68,10 @@ function renderCompetitions() {
 
 compForm?.addEventListener("submit", e => {
   e.preventDefault();
-  const name = compForm.compName.value.trim();
-  const winner = compForm.compWinner.value.trim();
-  const points = compForm.compPoints.value;
-  if (!name || !winner) return;
+  const name = document.getElementById("compName").value.trim();
+  const winner = document.getElementById("compWinner").value.trim();
+  const points = document.getElementById("compPoints").value;
+  if (!name || !winner || !points) return;
 
   const existing = competitions.findIndex(c => c.name === name);
   if (existing >= 0) competitions[existing] = { name, winner, points };
@@ -84,9 +84,9 @@ compForm?.addEventListener("submit", e => {
 
 function editCompetition(i) {
   const c = competitions[i];
-  compForm.compName.value = c.name;
-  compForm.compWinner.value = c.winner;
-  compForm.compPoints.value = c.points;
+  document.getElementById("compName").value = c.name;
+  document.getElementById("compWinner").value = c.winner;
+  document.getElementById("compPoints").value = c.points;
 }
 
 function deleteCompetition(i) {
@@ -118,8 +118,8 @@ function renderEvents() {
 
 eventForm?.addEventListener("submit", e => {
   e.preventDefault();
-  const name = eventForm.eventName.value.trim();
-  const date = eventForm.eventDate.value;
+  const name = document.getElementById("eventName").value.trim();
+  const date = document.getElementById("eventDate").value;
   if (!name || !date) return;
 
   const existing = events.findIndex(ev => ev.name === name);
@@ -133,8 +133,8 @@ eventForm?.addEventListener("submit", e => {
 
 function editEvent(i) {
   const ev = events[i];
-  eventForm.eventName.value = ev.name;
-  eventForm.eventDate.value = ev.date;
+  document.getElementById("eventName").value = ev.name;
+  document.getElementById("eventDate").value = ev.date;
 }
 
 function deleteEvent(i) {
@@ -169,11 +169,7 @@ const exportBtn = document.getElementById("exportData");
 const importInput = document.getElementById("importData");
 
 exportBtn?.addEventListener("click", () => {
-  const data = {
-    gallery: galleryImages,
-    competitions,
-    events
-  };
+  const data = { gallery: galleryImages, competitions, events };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
