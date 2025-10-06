@@ -1,8 +1,11 @@
 :root {
   --main-color: #0077cc;
-  --bg-color: #fafafa;
+  --accent-color: #ff6f61;
+  --bg-color: #f9f9f9;
   --text-color: #333;
+  --card-bg: #fff;
   --border-radius: 12px;
+  --shadow: 0 4px 10px rgba(0,0,0,0.08);
 }
 
 body {
@@ -17,11 +20,20 @@ header {
   background: var(--main-color);
   color: white;
   text-align: center;
-  padding: 1.2rem;
+  padding: 1.5rem 1rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+header h1 {
+  margin: 0 0 0.5rem 0;
+  font-weight: 700;
 }
 
 nav {
-  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 nav button {
@@ -29,42 +41,38 @@ nav button {
   border: none;
   border-radius: var(--border-radius);
   padding: 0.5rem 1rem;
-  margin: 0 0.3rem;
   cursor: pointer;
   font-weight: 600;
-  transition: background 0.3s;
+  transition: all 0.3s;
 }
 
 nav button.active {
-  background: #e2e2e2;
+  background: var(--accent-color);
+  color: white;
 }
 
 nav button:hover {
-  background: #d9d9d9;
+  opacity: 0.85;
 }
 
 main {
-  padding: 1.5rem;
-  max-width: 800px;
+  padding: 2rem 1rem;
+  max-width: 900px;
   margin: 0 auto;
 }
 
 .tab-content {
   display: none;
-  animation: fadeIn 0.4s ease;
+  animation: fadeIn 0.3s ease;
 }
 
 .tab-content.active {
   display: block;
 }
 
-form {
-  margin-bottom: 1rem;
-}
-
 input, button {
   padding: 0.6rem;
-  margin: 0.3rem;
+  margin: 0.3rem 0.3rem 0.3rem 0;
   border-radius: var(--border-radius);
   border: 1px solid #ccc;
   font-size: 1rem;
@@ -76,28 +84,52 @@ button[type="submit"], #exportData, .import-label {
   border: none;
   cursor: pointer;
   padding: 0.6rem 1rem;
-  border-radius: var(--border-radius);
-  display: inline-block;
+  transition: background 0.3s;
 }
 
 button[type="submit"]:hover, #exportData:hover, .import-label:hover {
   background: #005fa3;
 }
 
-ul {
-  list-style-type: none;
-  padding: 0;
+.card-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
-li {
-  background: white;
-  margin: 0.5rem 0;
-  padding: 0.6rem;
+.card-list .card {
+  background: var(--card-bg);
+  box-shadow: var(--shadow);
   border-radius: var(--border-radius);
+  padding: 1rem;
+  flex: 1 1 250px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+.card-list .card:hover {
+  transform: translateY(-3px);
+}
+
+.card span {
+  flex: 1;
+}
+
+.card button {
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  padding: 0.3rem 0.6rem;
+  margin-left: 0.3rem;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+}
+
+.card button:hover {
+  opacity: 0.9;
 }
 
 .gallery-grid {
@@ -112,27 +144,37 @@ li {
   border-radius: var(--border-radius);
   object-fit: cover;
   cursor: pointer;
+  transition: transform 0.3s;
 }
 
-table {
+.gallery-grid img:hover {
+  transform: scale(1.05);
+}
+
+.card-table table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 1rem;
+  background: var(--card-bg);
+  box-shadow: var(--shadow);
+  border-radius: var(--border-radius);
+  overflow: hidden;
 }
 
-table th, table td {
-  border: 1px solid #ccc;
-  padding: 0.6rem;
+.card-table th, .card-table td {
+  padding: 0.8rem;
   text-align: left;
 }
 
-table th {
-  background: #f2f2f2;
+.card-table th {
+  background: var(--accent-color);
+  color: white;
 }
 
 #backupSection {
   margin-top: 2rem;
-  text-align: center;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 footer {
@@ -146,4 +188,10 @@ footer {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(5px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+  .card-list .card {
+    flex: 1 1 100%;
+  }
 }
