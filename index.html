@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rönttöset</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Rönttöset</h1>
+    <nav>
+      <button class="tab-button active" data-tab="home">Home</button>
+      <button class="tab-button" data-tab="gallery">Gallery</button>
+      <button class="tab-button" data-tab="competitions">Competitions</button>
+      <button class="tab-button" data-tab="events">Events</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- HOME -->
+    <section id="home" class="tab-content active">
+      <h2>Welcome!</h2>
+      <p>This is the Rönttöset hub – track competition scores, upcoming events, and share memories!</p>
+      <h3>🏆 Top Scores</h3>
+      <table id="topScoresTable">
+        <thead>
+          <tr>
+            <th>Competition</th>
+            <th>Winner</th>
+            <th>Points</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <div id="backupSection">
+        <h3>💾 Backup Data</h3>
+        <button id="exportData">Export Data</button>
+        <label class="import-label">
+          Import Data
+          <input type="file" id="importData" accept="application/json" hidden>
+        </label>
+      </div>
+    </section>
+
+    <!-- GALLERY -->
+    <section id="gallery" class="tab-content">
+      <h2>Gallery</h2>
+      <input type="file" id="imageInput" accept="image/*">
+      <div id="galleryContainer" class="gallery-grid"></div>
+    </section>
+
+    <!-- COMPETITIONS -->
+    <section id="competitions" class="tab-content">
+      <h2>Competitions</h2>
+      <form id="competitionForm">
+        <input type="text" id="compName" placeholder="Competition name" required>
+        <input type="text" id="compWinner" placeholder="Winner" required>
+        <input type="number" id="compPoints" placeholder="Points" required>
+        <button type="submit">Add / Update</button>
+      </form>
+      <ul id="competitionList"></ul>
+    </section>
+
+    <!-- EVENTS -->
+    <section id="events" class="tab-content">
+      <h2>Upcoming Events</h2>
+      <form id="eventForm">
+        <input type="text" id="eventName" placeholder="Event name" required>
+        <input type="date" id="eventDate" required>
+        <button type="submit">Add / Update</button>
+      </form>
+      <ul id="eventList"></ul>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 Rönttöset</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
