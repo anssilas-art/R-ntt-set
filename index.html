@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Rönttöset</title>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -23,19 +25,19 @@
       <h2>Welcome!</h2>
       <p>This is the Rönttöset hub – track competition scores, upcoming events, and share memories!</p>
       <h3>🏆 Top Scores</h3>
-      <table id="topScoresTable">
-        <thead>
-          <tr>
-            <th>Competition</th>
-            <th>Winner</th>
-            <th>Points</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-
+      <div class="card-table">
+        <table id="topScoresTable">
+          <thead>
+            <tr>
+              <th>Competition</th>
+              <th>Winner</th>
+              <th>Points</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
       <div id="backupSection">
-        <h3>💾 Backup Data</h3>
         <button id="exportData">Export Data</button>
         <label class="import-label">
           Import Data
@@ -60,25 +62,8 @@
         <input type="number" id="compPoints" placeholder="Points" required>
         <button type="submit">Add / Update</button>
       </form>
-      <ul id="competitionList"></ul>
+      <div id="competitionList" class="card-list"></div>
     </section>
 
     <!-- EVENTS -->
-    <section id="events" class="tab-content">
-      <h2>Upcoming Events</h2>
-      <form id="eventForm">
-        <input type="text" id="eventName" placeholder="Event name" required>
-        <input type="date" id="eventDate" required>
-        <button type="submit">Add / Update</button>
-      </form>
-      <ul id="eventList"></ul>
-    </section>
-  </main>
-
-  <footer>
-    <p>© 2025 Rönttöset</p>
-  </footer>
-
-  <script src="script.js"></script>
-</body>
-</html>
+    <section id="events" class="tab-cont
