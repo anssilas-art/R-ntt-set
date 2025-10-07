@@ -1,108 +1,224 @@
-:root {
-  --bg: #f7f7f7;
-  --accent: #0078d7;
-  --text: #222;
-  --card: #fff;
-  --border: #ddd;
-}
+document.addEventListener("DOMContentLoaded", () => {
+  // --- Tab Navigation ---
+  const tabs = document.querySelectorAll(".tab-button");
+  const contents = document.querySelectorAll(".tab-content");
 
-body {
-  font-family: system-ui, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  margin: 0;
-  padding: 0;
-}
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      contents.forEach(c => c.classList.remove("active"));
+      tabs.forEach(t => t.classList.remove("active"));
+      document.getElementById(tab.dataset.tab).classList.add("active");
+      tab.classList.add("active");
+    });
+  });
 
-header {
-  background: var(--card);
-  padding: 1rem;
-  border-bottom: 1px solid var(--border);
-  text-align: center;
-}
+  // --- Gallery ---
+  const imageInput = document.getElementById("imageInput");
+  const galleryContainer = document.getElementById("galleryContainer");
+  let galleryImages = JSON.parse(localStorage.getItem("gallery")) || [];
 
-.navbar {
-  margin-top: 1rem;
-}
+  function renderGallery() {
+    galleryContainer.innerHTML = "";
+    galleryImages.forEach((src, i) => {
+      const img = document.createElement("img");
+      img.src = src;
+      img.title = "Click to remove";
+      img.addEventListener("click", () => {
+        galleryImages.splice(i, 1);
+        localStorage.setItem("gallery", JSON.stringify(galleryImages));
+        renderGallery();
+      });
+      galleryContainer.appendChild(img);
+    });
+  }
 
-.navbar button {
-  margin: 0.25rem;
-  padding: 0.5rem 1rem;
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  cursor: pointer;
-}
+  imageInput.addEventListener("change", e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      galleryImages.push(reader.result);
+      localStorage.setItem("gallery", JSON.stringify(galleryImages));
+      renderGallery();
+    };
+    reader.readAsDataURL(file);
+  });
 
-.navbar button.active {
-  background: var(--accent);
-  color: white;
-}
+  renderGallery();
 
-main {
-  padding: 1.5rem;
-  max-width: 800px;
-  margin: auto;
-}
+  // --- Competitions ---
+  const compForm = document.getElementById("competitionForm");
+  const compListDiv = document.getElementById("competitionList");
+  let competitions = JSON.parse(localStorage.getItem("competitions")) || [];
 
-.tab-content {
-  display: none;
-}
+  function renderCompetitions() {
+    compListDiv.innerHTML = "";
+    competitions.forEach((c, i) => {
+      const div = document.createElement("div");
+      div.className = "card";
+      const span = document.createElement("span");
+      span.textContent = `${c.name} — ${c.winner} (${c.points} pts)`;
+      div.appendChild(span);
 
-.tab-content.active {
-  display: block;
-}
+      const btnContainer = document.createElement("div");
+      const editBtn = document.createElement("button");
+      editBtn.textContent = "✏️";
+      editBtn.addEventListener("click", () => editCompetition(i));
+      const deleteBtn = document.createElement("button");
+      deleteBtn.textContent = "🗑️";
+      deleteBtn.addEventListener("click", () => deleteCompetition(i));
 
-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
+      btnContainer.appendChild(editBtn);
+      btnContainer.appendChild(deleteBtn);
+      div.appendChild(btnContainer);
+      compListDiv.appendChild(div);
+    });
+    updateTopScores();
+  }
 
-form input, form button {
-  padding: 0.5rem;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-}
+  compForm.addEventListener("submit", e => {
+    e.preventDefault();
+    const name = document.getElementById("compName").value.trim();
+    const winner = document.getElementById("compWinner").value.trim();
+    const points = document.getElementById("compPoints").value;
+    if (!name || !winner || !points) return;
 
-form button {
-  background: var(--accent);
-  color: white;
-  cursor: pointer;
-}
+    const existing = competitions.findIndex(c => c.name === name);
+    if (existing >= 0) competitions[existing] = { name, winner, points };
+    else competitions.push({ name, winner, points });
 
-.card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 0.75rem;
-  margin-bottom: 0.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+    localStorage.setItem("competitions", JSON.stringify(competitions));
+    compForm.reset();
+    renderCompetitions();
+  });
 
-.gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 0.5rem;
-  margin-top: 1rem;
-}
+  function editCompetition(i) {
+    const c = competitions[i];
+    document.getElementById("compName").value = c.name;
+    document.getElementById("compWinner").value = c.winner;
+    document.getElementById("compPoints").value = c.points;
+  }
 
-.gallery-grid img {
-  width: 100%;
-  border-radius: 6px;
-  cursor: pointer;
-}
+  function deleteCompetition(i) {
+    competitions.splice(i, 1);
+    localStorage.setItem("competitions", JSON.stringify(competitions));
+    renderCompetitions();
+  }
 
-.export-section {
-  margin: 1rem 0;
-}
+  renderCompetitions();
 
-footer {
-  text-align: center;
-  padding: 1rem;
-  background: var(--card);
-  border-top: 1px solid var(--border);
-}
+  // --- Events ---
+  const eventForm = document.getElementById("eventForm");
+  const eventListDiv = document.getElementById("eventList");
+  let events = JSON.parse(localStorage.getItem("events")) || [];
+
+  function renderEvents() {
+    eventListDiv.innerHTML = "";
+    events.forEach((ev, i) => {
+      const div = document.createElement("div");
+      div.className = "card";
+      const span = document.createElement("span");
+      span.textContent = `${ev.name} — ${ev.date}`;
+      div.appendChild(span);
+
+      const btnContainer = document.createElement("div");
+      const editBtn = document.createElement("button");
+      editBtn.textContent = "✏️";
+      editBtn.addEventListener("click", () => editEvent(i));
+      const deleteBtn = document.createElement("button");
+      deleteBtn.textContent = "🗑️";
+      deleteBtn.addEventListener("click", () => deleteEvent(i));
+
+      btnContainer.appendChild(editBtn);
+      btnContainer.appendChild(deleteBtn);
+      div.appendChild(btnContainer);
+      eventListDiv.appendChild(div);
+    });
+  }
+
+  eventForm.addEventListener("submit", e => {
+    e.preventDefault();
+    const name = document.getElementById("eventName").value.trim();
+    const date = document.getElementById("eventDate").value;
+    if (!name || !date) return;
+
+    const existing = events.findIndex(ev => ev.name === name);
+    if (existing >= 0) events[existing] = { name, date };
+    else events.push({ name, date });
+
+    localStorage.setItem("events", JSON.stringify(events));
+    eventForm.reset();
+    renderEvents();
+  });
+
+  function editEvent(i) {
+    const ev = events[i];
+    document.getElementById("eventName").value = ev.name;
+    document.getElementById("eventDate").value = ev.date;
+  }
+
+  function deleteEvent(i) {
+    events.splice(i, 1);
+    localStorage.setItem("events", JSON.stringify(events));
+    renderEvents();
+  }
+
+  renderEvents();
+
+  // --- Top Scores ---
+  const topScoresTable = document.querySelector("#topScoresTable tbody");
+  function updateTopScores() {
+    topScoresTable.innerHTML = "";
+    const sorted = [...competitions].sort((a, b) => b.points - a.points);
+    sorted.slice(0, 10).forEach(c => {
+      const row = document.createElement("tr");
+      row.innerHTML = `<td>${c.name}</td><td>${c.winner}</td><td>${c.points}</td>`;
+      topScoresTable.appendChild(row);
+    });
+  }
+
+  updateTopScores();
+
+  // --- Export / Import ---
+  const exportBtn = document.getElementById("exportData");
+  const importInput = document.getElementById("importData");
+
+  exportBtn.addEventListener("click", () => {
+    const data = { gallery: galleryImages, competitions, events };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "ronttoset_backup.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  importInput.addEventListener("change", e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result);
+        if (data.gallery && data.competitions && data.events) {
+          galleryImages = data.gallery;
+          competitions = data.competitions;
+          events = data.events;
+          localStorage.setItem("gallery", JSON.stringify(galleryImages));
+          localStorage.setItem("competitions", JSON.stringify(competitions));
+          localStorage.setItem("events", JSON.stringify(events));
+          renderGallery();
+          renderCompetitions();
+          renderEvents();
+          alert("✅ Data imported successfully!");
+        } else {
+          alert("❌ Invalid backup file.");
+        }
+      } catch {
+        alert("❌ Failed to read file.");
+      }
+    };
+    reader.readAsText(file);
+  });
+});
