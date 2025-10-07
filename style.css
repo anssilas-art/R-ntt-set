@@ -1,197 +1,108 @@
 :root {
-  --main-color: #0077cc;
-  --accent-color: #ff6f61;
-  --bg-color: #f9f9f9;
-  --text-color: #333;
-  --card-bg: #fff;
-  --border-radius: 12px;
-  --shadow: 0 4px 10px rgba(0,0,0,0.08);
+  --bg: #f7f7f7;
+  --accent: #0078d7;
+  --text: #222;
+  --card: #fff;
+  --border: #ddd;
 }
 
 body {
-  font-family: 'Inter', sans-serif;
-  background: var(--bg-color);
-  color: var(--text-color);
+  font-family: system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
   margin: 0;
   padding: 0;
 }
 
 header {
-  background: var(--main-color);
-  color: white;
+  background: var(--card);
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
   text-align: center;
-  padding: 1.5rem 1rem;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-header h1 {
-  margin: 0 0 0.5rem 0;
-  font-weight: 700;
+.navbar {
+  margin-top: 1rem;
 }
 
-nav {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-nav button {
-  background: white;
-  border: none;
-  border-radius: var(--border-radius);
+.navbar button {
+  margin: 0.25rem;
   padding: 0.5rem 1rem;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
   cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s;
 }
 
-nav button.active {
-  background: var(--accent-color);
+.navbar button.active {
+  background: var(--accent);
   color: white;
-}
-
-nav button:hover {
-  opacity: 0.85;
 }
 
 main {
-  padding: 2rem 1rem;
-  max-width: 900px;
-  margin: 0 auto;
+  padding: 1.5rem;
+  max-width: 800px;
+  margin: auto;
 }
 
 .tab-content {
   display: none;
-  animation: fadeIn 0.3s ease;
 }
 
 .tab-content.active {
   display: block;
 }
 
-input, button {
-  padding: 0.6rem;
-  margin: 0.3rem 0.3rem 0.3rem 0;
-  border-radius: var(--border-radius);
-  border: 1px solid #ccc;
-  font-size: 1rem;
-}
-
-button[type="submit"], #exportData, .import-label {
-  background: var(--main-color);
-  color: white;
-  border: none;
-  cursor: pointer;
-  padding: 0.6rem 1rem;
-  transition: background 0.3s;
-}
-
-button[type="submit"]:hover, #exportData:hover, .import-label:hover {
-  background: #005fa3;
-}
-
-.card-list {
+form {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
-.card-list .card {
-  background: var(--card-bg);
-  box-shadow: var(--shadow);
-  border-radius: var(--border-radius);
-  padding: 1rem;
-  flex: 1 1 250px;
+form input, form button {
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+form button {
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: transform 0.2s;
-}
-
-.card-list .card:hover {
-  transform: translateY(-3px);
-}
-
-.card span {
-  flex: 1;
-}
-
-.card button {
-  background: var(--accent-color);
-  color: white;
-  border: none;
-  padding: 0.3rem 0.6rem;
-  margin-left: 0.3rem;
-  border-radius: var(--border-radius);
-  cursor: pointer;
-}
-
-.card button:hover {
-  opacity: 0.9;
 }
 
 .gallery-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.5rem;
   margin-top: 1rem;
 }
 
 .gallery-grid img {
   width: 100%;
-  border-radius: var(--border-radius);
-  object-fit: cover;
+  border-radius: 6px;
   cursor: pointer;
-  transition: transform 0.3s;
 }
 
-.gallery-grid img:hover {
-  transform: scale(1.05);
-}
-
-.card-table table {
-  width: 100%;
-  border-collapse: collapse;
-  background: var(--card-bg);
-  box-shadow: var(--shadow);
-  border-radius: var(--border-radius);
-  overflow: hidden;
-}
-
-.card-table th, .card-table td {
-  padding: 0.8rem;
-  text-align: left;
-}
-
-.card-table th {
-  background: var(--accent-color);
-  color: white;
-}
-
-#backupSection {
-  margin-top: 2rem;
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
+.export-section {
+  margin: 1rem 0;
 }
 
 footer {
   text-align: center;
   padding: 1rem;
-  color: #666;
-  background: #f0f0f0;
-  margin-top: 2rem;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@media (max-width: 600px) {
-  .card-list .card {
-    flex: 1 1 100%;
-  }
+  background: var(--card);
+  border-top: 1px solid var(--border);
 }
