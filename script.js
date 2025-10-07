@@ -1,72 +1,92 @@
-// --- Tab Navigation ---
-const tabs = document.querySelectorAll(".tab-button");
-const contents = document.querySelectorAll(".tab-content");
+document.addEventListener("DOMContentLoaded", () => {
+  // --- Tabs ---
+  const tabs = Array.from(document.querySelectorAll(".tab-button"));
+  const contents = Array.from(document.querySelectorAll(".tab-content"));
 
-tabs.forEach(tab => {
-  tab.addEventListener("click", () => {
+  function activateTab(tabBtn) {
     contents.forEach(c => c.classList.remove("active"));
     tabs.forEach(t => t.classList.remove("active"));
-    document.getElementById(tab.dataset.tab).classList.add("active");
-    tab.classList.add("active");
-  });
-});
+    const id = tabBtn.dataset.tab;
+    const el = document.getElementById(id);
+    if (el) el.classList.add("active");
+    tabBtn.classList.add("active");
+  }
 
-// --- Gallery ---
-const imageInput = document.getElementById("imageInput");
-const galleryContainer = document.getElementById("galleryContainer");
-let galleryImages = JSON.parse(localStorage.getItem("gallery")) || [];
+  tabs.forEach(t => t.addEventListener("click", () => activateTab(t)));
 
-function renderGallery() {
-  galleryContainer.innerHTML = "";
-  galleryImages.forEach((src, i) => {
-    const img = document.createElement("img");
-    img.src = src;
-    img.title = "Click to remove";
-    img.addEventListener("click", () => {
-      galleryImages.splice(i, 1);
-      localStorage.setItem("gallery", JSON.stringify(galleryImages));
-      renderGallery();
+  // --- Gallery ---
+  const imageInput = document.getElementById("imageInput");
+  const galleryContainer = document.getElementById("galleryContainer");
+  let galleryImages = JSON.parse(localStorage.getItem("gallery") || "[]");
+
+  function renderGallery() {
+    if (!galleryContainer) return;
+    galleryContainer.innerHTML = "";
+    galleryImages.forEach((src, i) => {
+      const img = document.createElement("img");
+      img.src = src;
+      img.alt = `image-${i}`;
+      img.title = "Click to remove";
+      img.addEventListener("click", () => {
+        galleryImages.splice(i, 1);
+        localStorage.setItem("gallery", JSON.stringify(galleryImages));
+        renderGallery();
+      });
+      galleryContainer.appendChild(img);
     });
-    galleryContainer.appendChild(img);
-  });
-}
+  }
 
-imageInput.addEventListener("change", e => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    galleryImages.push(reader.result);
-    localStorage.setItem("gallery", JSON.stringify(galleryImages));
-    renderGallery();
-  };
-  reader.readAsDataURL(file);
-});
+  if (imageInput) {
+    imageInput.addEventListener("change", e => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        galleryImages.push(reader.result);
+        localStorage.setItem("gallery", JSON.stringify(galleryImages));
+        renderGallery();
+      };
+      reader.readAsDataURL(file);
+      // clear input to allow same file re-upload if needed
+      imageInput.value = "";
+    });
+  }
+  renderGallery();
 
-renderGallery();
+  // --- Competitions ---
+  const compForm = document.getElementById("competitionForm");
+  const compListDiv = document.getElementById("competitionList");
+  let competitions = JSON.parse(localStorage.getItem("competitions") || "[]");
 
-// --- Competitions ---
-const compForm = document.getElementById("competitionForm");
-const compListDiv = document.getElementById("competitionList");
-let competitions = JSON.parse(localStorage.getItem("competitions")) || [];
+  function renderCompetitions() {
+    if (!compListDiv) return;
+    compListDiv.innerHTML = "";
+    competitions.forEach((c, i) => {
+      const card = document.createElement("div");
+      card.className = "card";
 
-function renderCompetitions() {
-  compListDiv.innerHTML = "";
-  competitions.forEach((c, i) => {
-    const div = document.createElement("div");
-    div.className = "card";
-    const span = document.createElement("span");
-    span.textContent = `${c.name} — ${c.winner} (${c.points} pts)`;
-    div.appendChild(span);
+      const left = document.createElement("div");
+      left.textContent = `${c.name} — ${c.winner} (${c.points} pts)`;
+      card.appendChild(left);
 
-    const btnContainer = document.createElement("div");
-    const editBtn = document.createElement("button");
-    editBtn.textContent = "✏️";
-    editBtn.addEventListener("click", () => editCompetition(i));
-    const deleteBtn = document.createElement("button");
-    deleteBtn.textContent = "🗑️";
-    deleteBtn.addEventListener("click", () => deleteCompetition(i));
+      const btnWrap = document.createElement("div");
+      const edit = document.createElement("button");
+      edit.textContent = "✏️";
+      edit.addEventListener("click", () => editCompetition(i));
+      const del = document.createElement("button");
+      del.textContent = "🗑️";
+      del.addEventListener("click", () => deleteCompetition(i));
+      btnWrap.appendChild(edit);
+      btnWrap.appendChild(del);
+      card.appendChild(btnWrap);
 
-    btnContainer.appendChild(editBtn);
-    btnContainer.appendChild(deleteBtn);
-    div.appendChild(btn
+      compListDiv.appendChild(card);
+    });
+    updateTopScores();
+  }
+
+  if (compForm) {
+    compForm.addEventListener("submit", e => {
+      e.preventDefault();
+      const name = (document.getElementById("compName") || {}).value?.trim();
+      const winner = (document.getElementById("compWinner") || {}).value?.trim(
