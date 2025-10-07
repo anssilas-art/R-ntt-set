@@ -1,224 +1,67 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // --- Tab Navigation ---
-  const tabs = document.querySelectorAll(".tab-button");
-  const contents = document.querySelectorAll(".tab-content");
+:root{
+  --bg:#f7f7f7;
+  --card:#ffffff;
+  --accent:#0078d7;
+  --accent-2:#ff6f61;
+  --text:#222;
+  --border:#e4e4e4;
+  --radius:8px;
+}
 
-  tabs.forEach(tab => {
-    tab.addEventListener("click", () => {
-      contents.forEach(c => c.classList.remove("active"));
-      tabs.forEach(t => t.classList.remove("active"));
-      document.getElementById(tab.dataset.tab).classList.add("active");
-      tab.classList.add("active");
-    });
-  });
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+  background:var(--bg);
+  color:var(--text);
+}
 
-  // --- Gallery ---
-  const imageInput = document.getElementById("imageInput");
-  const galleryContainer = document.getElementById("galleryContainer");
-  let galleryImages = JSON.parse(localStorage.getItem("gallery")) || [];
+header{
+  background:var(--card);
+  border-bottom:1px solid var(--border);
+  padding:18px 12px;
+  text-align:center;
+}
 
-  function renderGallery() {
-    galleryContainer.innerHTML = "";
-    galleryImages.forEach((src, i) => {
-      const img = document.createElement("img");
-      img.src = src;
-      img.title = "Click to remove";
-      img.addEventListener("click", () => {
-        galleryImages.splice(i, 1);
-        localStorage.setItem("gallery", JSON.stringify(galleryImages));
-        renderGallery();
-      });
-      galleryContainer.appendChild(img);
-    });
-  }
+header h1{margin:0 0 8px 0;font-size:20px}
 
-  imageInput.addEventListener("change", e => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      galleryImages.push(reader.result);
-      localStorage.setItem("gallery", JSON.stringify(galleryImages));
-      renderGallery();
-    };
-    reader.readAsDataURL(file);
-  });
+.navbar{margin-top:8px}
+.tab-button{
+  margin:4px;
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:transparent;
+  cursor:pointer;
+  font-weight:600;
+}
+.tab-button.active{ background:var(--accent); color:white; border-color:transparent; }
 
-  renderGallery();
+main{max-width:900px;margin:20px auto;padding:0 12px}
 
-  // --- Competitions ---
-  const compForm = document.getElementById("competitionForm");
-  const compListDiv = document.getElementById("competitionList");
-  let competitions = JSON.parse(localStorage.getItem("competitions")) || [];
+.tab-content{display:none}
+.tab-content.active{display:block}
 
-  function renderCompetitions() {
-    compListDiv.innerHTML = "";
-    competitions.forEach((c, i) => {
-      const div = document.createElement("div");
-      div.className = "card";
-      const span = document.createElement("span");
-      span.textContent = `${c.name} — ${c.winner} (${c.points} pts)`;
-      div.appendChild(span);
+.export-section{margin:12px 0;display:flex;gap:8px;align-items:center}
+#exportData{padding:8px 12px;background:var(--accent);color:white;border:none;border-radius:6px;cursor:pointer}
+#importData{cursor:pointer}
 
-      const btnContainer = document.createElement("div");
-      const editBtn = document.createElement("button");
-      editBtn.textContent = "✏️";
-      editBtn.addEventListener("click", () => editCompetition(i));
-      const deleteBtn = document.createElement("button");
-      deleteBtn.textContent = "🗑️";
-      deleteBtn.addEventListener("click", () => deleteCompetition(i));
+form{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+form input, form button{padding:8px;border-radius:6px;border:1px solid var(--border)}
+form button{background:var(--accent);color:white;border:none;cursor:pointer}
 
-      btnContainer.appendChild(editBtn);
-      btnContainer.appendChild(deleteBtn);
-      div.appendChild(btnContainer);
-      compListDiv.appendChild(div);
-    });
-    updateTopScores();
-  }
+.card{background:var(--card);padding:12px;border-radius:8px;border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;box-shadow:0 2px 6px rgba(0,0,0,0.04)}
+.card button{margin-left:6px;padding:6px 8px;border-radius:6px;border:none;background:var(--accent-2);color:white;cursor:pointer}
 
-  compForm.addEventListener("submit", e => {
-    e.preventDefault();
-    const name = document.getElementById("compName").value.trim();
-    const winner = document.getElementById("compWinner").value.trim();
-    const points = document.getElementById("compPoints").value;
-    if (!name || !winner || !points) return;
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-top:10px}
+.gallery-grid img{width:100%;height:120px;object-fit:cover;border-radius:6px;cursor:pointer;display:block}
 
-    const existing = competitions.findIndex(c => c.name === name);
-    if (existing >= 0) competitions[existing] = { name, winner, points };
-    else competitions.push({ name, winner, points });
+table{width:100%;border-collapse:collapse;margin-top:8px}
+table th, table td{padding:8px;border-bottom:1px solid var(--border);text-align:left}
+table thead th{background:transparent;color:var(--text);font-weight:600}
 
-    localStorage.setItem("competitions", JSON.stringify(competitions));
-    compForm.reset();
-    renderCompetitions();
-  });
-
-  function editCompetition(i) {
-    const c = competitions[i];
-    document.getElementById("compName").value = c.name;
-    document.getElementById("compWinner").value = c.winner;
-    document.getElementById("compPoints").value = c.points;
-  }
-
-  function deleteCompetition(i) {
-    competitions.splice(i, 1);
-    localStorage.setItem("competitions", JSON.stringify(competitions));
-    renderCompetitions();
-  }
-
-  renderCompetitions();
-
-  // --- Events ---
-  const eventForm = document.getElementById("eventForm");
-  const eventListDiv = document.getElementById("eventList");
-  let events = JSON.parse(localStorage.getItem("events")) || [];
-
-  function renderEvents() {
-    eventListDiv.innerHTML = "";
-    events.forEach((ev, i) => {
-      const div = document.createElement("div");
-      div.className = "card";
-      const span = document.createElement("span");
-      span.textContent = `${ev.name} — ${ev.date}`;
-      div.appendChild(span);
-
-      const btnContainer = document.createElement("div");
-      const editBtn = document.createElement("button");
-      editBtn.textContent = "✏️";
-      editBtn.addEventListener("click", () => editEvent(i));
-      const deleteBtn = document.createElement("button");
-      deleteBtn.textContent = "🗑️";
-      deleteBtn.addEventListener("click", () => deleteEvent(i));
-
-      btnContainer.appendChild(editBtn);
-      btnContainer.appendChild(deleteBtn);
-      div.appendChild(btnContainer);
-      eventListDiv.appendChild(div);
-    });
-  }
-
-  eventForm.addEventListener("submit", e => {
-    e.preventDefault();
-    const name = document.getElementById("eventName").value.trim();
-    const date = document.getElementById("eventDate").value;
-    if (!name || !date) return;
-
-    const existing = events.findIndex(ev => ev.name === name);
-    if (existing >= 0) events[existing] = { name, date };
-    else events.push({ name, date });
-
-    localStorage.setItem("events", JSON.stringify(events));
-    eventForm.reset();
-    renderEvents();
-  });
-
-  function editEvent(i) {
-    const ev = events[i];
-    document.getElementById("eventName").value = ev.name;
-    document.getElementById("eventDate").value = ev.date;
-  }
-
-  function deleteEvent(i) {
-    events.splice(i, 1);
-    localStorage.setItem("events", JSON.stringify(events));
-    renderEvents();
-  }
-
-  renderEvents();
-
-  // --- Top Scores ---
-  const topScoresTable = document.querySelector("#topScoresTable tbody");
-  function updateTopScores() {
-    topScoresTable.innerHTML = "";
-    const sorted = [...competitions].sort((a, b) => b.points - a.points);
-    sorted.slice(0, 10).forEach(c => {
-      const row = document.createElement("tr");
-      row.innerHTML = `<td>${c.name}</td><td>${c.winner}</td><td>${c.points}</td>`;
-      topScoresTable.appendChild(row);
-    });
-  }
-
-  updateTopScores();
-
-  // --- Export / Import ---
-  const exportBtn = document.getElementById("exportData");
-  const importInput = document.getElementById("importData");
-
-  exportBtn.addEventListener("click", () => {
-    const data = { gallery: galleryImages, competitions, events };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "ronttoset_backup.json";
-    a.click();
-    URL.revokeObjectURL(url);
-  });
-
-  importInput.addEventListener("change", e => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        const data = JSON.parse(reader.result);
-        if (data.gallery && data.competitions && data.events) {
-          galleryImages = data.gallery;
-          competitions = data.competitions;
-          events = data.events;
-          localStorage.setItem("gallery", JSON.stringify(galleryImages));
-          localStorage.setItem("competitions", JSON.stringify(competitions));
-          localStorage.setItem("events", JSON.stringify(events));
-          renderGallery();
-          renderCompetitions();
-          renderEvents();
-          alert("✅ Data imported successfully!");
-        } else {
-          alert("❌ Invalid backup file.");
-        }
-      } catch {
-        alert("❌ Failed to read file.");
-      }
-    };
-    reader.readAsText(file);
-  });
-});
+footer{margin-top:24px;text-align:center;padding:12px;background:var(--card);border-top:1px solid var(--border)}
+@media (max-width:600px){
+  .gallery-grid img{height:100px}
+  form input{flex:1 1 100%}
+}
