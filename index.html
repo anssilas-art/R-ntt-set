@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Rönttöset</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -20,10 +20,11 @@
   <main>
     <section id="home" class="tab-content active">
       <h2>Welcome to Rönttöset</h2>
-      <p>Track competitions, events, and share memories with your friends.</p>
+      <p>Track competitions, events and share gallery images with friends.</p>
+
       <div class="export-section">
         <button id="exportData">Export Data</button>
-        <input type="file" id="importData" accept=".json">
+        <input id="importData" type="file" accept=".json">
       </div>
 
       <h3>Top Scores</h3>
@@ -37,13 +38,37 @@
 
     <section id="gallery" class="tab-content">
       <h2>Gallery</h2>
-      <input type="file" id="imageInput" accept="image/*">
+      <input id="imageInput" type="file" accept="image/*">
       <div id="galleryContainer" class="gallery-grid"></div>
     </section>
 
     <section id="competitions" class="tab-content">
       <h2>Competitions</h2>
       <form id="competitionForm">
-        <input type="text" id="compName" placeholder="Competition name" required>
-        <input type="text" id="compWinner" placeholder="Winner" required>
-        <input type="
+        <input id="compName" type="text" placeholder="Competition name" required>
+        <input id="compWinner" type="text" placeholder="Winner" required>
+        <input id="compPoints" type="number" placeholder="Points" required>
+        <button type="submit">Add / Update</button>
+      </form>
+      <div id="competitionList"></div>
+    </section>
+
+    <section id="events" class="tab-content">
+      <h2>Upcoming Events</h2>
+      <form id="eventForm">
+        <input id="eventName" type="text" placeholder="Event name" required>
+        <input id="eventDate" type="date" required>
+        <button type="submit">Add / Update</button>
+      </form>
+      <div id="eventList"></div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 Rönttöset</p>
+  </footer>
+
+  <!-- script at end so DOM exists; script.js also wraps with DOMContentLoaded -->
+  <script src="script.js"></script>
+</body>
+</html>
